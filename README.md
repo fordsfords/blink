@@ -42,18 +42,22 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
         wget http://fordsfords.github.io/blink/blink.c
         wget http://fordsfords.github.io/blink/bld.sh
 
-3. Build and test the package:
+3. Build the package:
 
         ./bld.sh
 (Uses "sudo" so will prompt for CHIP's password.)
 
+4. Test the package:
+
         sudo /usr/local/bin/blink
 (After a few seconds watching the blinking light, ground XIO-P7 and watch CHIP shut down.  Be sure to un-ground it afterwards.)
 
-4. Set up root's crontab to automatically start blink at boot time:
+5. Set up root's crontab to automatically start blink at boot time:
 
         sudo crontab -e
 (Add the line "@reboot sleep 10;/usr/local/bin/blink" near the beginning of the file.  Save and exit.)
+
+6. Reboot SHIP to start blink as a background process:
 
         sudo shutdown -r now
 (CHIP reboots and status LED starts blinking automatically.)
