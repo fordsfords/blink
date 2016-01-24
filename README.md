@@ -28,7 +28,6 @@ The [CHIP](http://getchip.com/) single-board computer runs Linux.  As a result, 
 You can find blink at:
 
 * User documentation (this README): https://github.com/fordsfords/blink/tree/gh-pages
-* Semi-literate internal documentation: http://fordsfords.github.io/blink/html/
 
 Note: the "gh-pages" branch is considered to be the current stable release.  The "Master" branch is the development cutting edge.
 
@@ -37,6 +36,11 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
 1. If you haven't set up your CHIP to be able to compile C programs, perform [these instructions](http://wiki.geeky-boy.com/w/index.php?title=CHIP_do_once) up to and including installing gcc.
 
 2. Get the [blink github project](https://github.com/fordsfords/blink/tree/gh-pages) onto CHIP.
+
+        mkdir blink
+        cd blink
+        wget http://fordsfords.github.io/blink/blink.c
+        wget http://fordsfords.github.io/blink/bld.sh
 
 3. Build and test the package:
 
