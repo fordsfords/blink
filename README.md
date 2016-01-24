@@ -35,7 +35,7 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
 
 1. If you haven't set up your CHIP to be able to compile C programs, perform [these instructions](http://wiki.geeky-boy.com/w/index.php?title=CHIP_do_once) up to and including installing gcc.
 
-2. Get the [blink github project](https://github.com/fordsfords/blink/tree/gh-pages) onto CHIP.
+2. Get the files onto CHIP:
 
         mkdir blink
         cd blink
@@ -46,6 +46,7 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
 
         ./bld.sh
 (Uses "sudo" so will prompt for CHIP's password.)
+
         sudo /usr/local/bin/blink
 (After a few seconds watching the blinking light, ground XIO-P7 and watch CHIP shut down.  Be sure to un-ground it afterwards.)
 
