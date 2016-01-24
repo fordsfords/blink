@@ -29,7 +29,7 @@ You can find blink at:
 
 * User documentation (this README): https://github.com/fordsfords/blink/tree/gh-pages
 
-Note: the "gh-pages" branch is considered to be the current stable release.  The "Master" branch is the development cutting edge.
+Note: the "gh-pages" branch is considered to be the current stable release.  The "master" branch is the development cutting edge.
 
 ## Quick Start
 
