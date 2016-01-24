@@ -57,7 +57,7 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
         sudo crontab -e
 (Add the line "@reboot sleep 10;/usr/local/bin/blink" near the beginning of the file.  Save and exit.)
 
-6. Reboot SHIP to start blink as a background process:
+6. Reboot CHIP to start blink as a background process:
 
         sudo shutdown -r now
 (CHIP reboots and status LED starts blinking automatically.)
