@@ -41,6 +41,7 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
         cd blink
         wget http://fordsfords.github.io/blink/blink.c
         wget http://fordsfords.github.io/blink/bld.sh
+        chmod +x bld.sh
 
 3. Build the package:
 
