@@ -42,6 +42,7 @@ These instructions assume you are in a shell prompt on CHIP.
         cd /usr/local/bin
         sudo wget http://fordsfords.github.io/blink/blink
         sudo chmod +x blink
+        cd
 
 2. Set up root's crontab to automatically start blink at boot time:
 
@@ -65,6 +66,7 @@ After a few seconds watching the blinking LED, ground XIO-P7 and watch CHIP shut
         wget http://fordsfords.github.io/blink/blink.c
         wget http://fordsfords.github.io/blink/bld.sh
         chmod +x bld.sh
+(Note: you could alternately use "git" download the whole project, but CHIP doesn't come with "git" pre-installed, so this is easier.)
 
 3. Build the package:
 
