@@ -36,6 +36,11 @@
  
 int main()
 {
+  /* Store this process's PID to allow easy killing. */
+  FILE *pid_file = fopen("/tmp/blink.pid", "w");  ECHK(pid_file != NULL);
+  fprintf(pid_file, "%ld\n", (long)getpid());
+  fclose(pid_file);
+
   /* Enable and configure XIO-P7 as input. */
 
   int exp_fd = open("/sys/class/gpio/export", O_WRONLY);  ECHK(exp_fd != -1);
