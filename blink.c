@@ -60,7 +60,7 @@ int main()
     int val_fd = open("/sys/class/gpio/gpio415/value", O_RDWR);  ECHK(val_fd != -1);
     int rlen = read(val_fd, readbuf, sizeof(readbuf));  ECHK(rlen > 0);
     close(val_fd);
-    sleep(1);
+    usleep(1000000);  /* 1 million microseconds - 1 second of sleep */
   } while (readbuf[0] == '1');
 
   exp_fd = open("/sys/class/gpio/unexport", O_WRONLY);  ECHK(exp_fd != -1);
