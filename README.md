@@ -39,10 +39,9 @@ These instructions assume you are in a shell prompt on CHIP.
 
 1. Get the executable file onto CHIP:
 
-        cd /usr/local/bin
-        sudo wget http://fordsfords.github.io/blink/blink
-        sudo chmod +x blink
-        cd
+        sudo wget -O/usr/local/bin/blink http://fordsfords.github.io/blink/blink
+        sudo chmod +x /usr/local/bin/blink
+If you are already running blink and are just refreshing your version, the wget might complain "/usr/local/bin/blink: Text file busy".  If so, you need to kill the currently running blink and try again.  See "killing blink" below.
 
 2. Set up root's crontab to automatically start blink at boot time:
 
@@ -63,8 +62,8 @@ After a few seconds watching the blinking LED, ground XIO-P7 and watch CHIP shut
 
         mkdir blink
         cd blink
-        wget http://fordsfords.github.io/blink/blink.c
-        wget http://fordsfords.github.io/blink/bld.sh
+        wget -Oblink.c http://fordsfords.github.io/blink/blink.c
+        wget -Obld.sh http://fordsfords.github.io/blink/bld.sh
         chmod +x bld.sh
 (Note: you could alternately use "git" download the whole project, but CHIP doesn't come with "git" pre-installed, so this is easier.)
 
@@ -72,6 +71,22 @@ After a few seconds watching the blinking LED, ground XIO-P7 and watch CHIP shut
 
         ./bld.sh
 (Uses sudo to write the executable into /usr/local/bin; sudo will typically prompt for your password.)
+
+## Killing Blink
+
+If you are running a recent enough version of blink, it creates the file "/tmp/blink.pid" containing the PID of the blink process.  If this file exists, you can kill blink with:
+
+        sudo kill $(cat /tmp/blink.pid)
+
+If your version is too old for that to work, enter:
+
+        ps aux | egrep "[b]link"
+It will typically list two processes; the second is the one you want to kill.  The second column in the "ps" output is the process ID (an integer, typically less than 1000).  For example:
+
+        $ ps aux | egrep "[b]link"
+        . . .
+        root 368 0.0  0.1 1352   740 ? S 09:17 0:00 /usr/local/bin/blink
+        $ kill 368
 
 ## Random Notes
 
@@ -92,4 +107,4 @@ I'm not sure why one would want to do this with blink as written, but feel free 
 
 * 17-Feb-2016
 
-    Added binary executable to package.  Updated quickstart to use it.  Made a few more improvements to documentation.  Also changed the 1 second sleep to 1 million microseconds to make it easier to use a faster blink rate.
+    Added binary executable to package.  Updated quickstart to use it.  Made a few more improvements to documentation.  Also changed the 1 second sleep to 1 million microseconds to make it easier to use a faster blink rate.  Also added /tmp/blink.pid file.
