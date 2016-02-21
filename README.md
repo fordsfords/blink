@@ -54,6 +54,14 @@ Add the line "@reboot sleep 10;/usr/local/bin/blink" near the beginning of the f
 
 After a few seconds watching the blinking LED, ground XIO-P7 and watch CHIP shut down.  Be sure to un-ground it afterwards.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
 
+Thanks to Efreak, blink can also be invoked as:
+
+        sudo /usr/local/bin/blink 1000000 1000000
+
+where the first number is the number of microseconds for the LED to stay on, and the second number is the number of microseconds for the LED stay off.  So you can save power by adjusting the duty cycle:
+
+        sudo /usr/local/bin/blink 200000 1800000
+
 ## Build from source
 
 1. If you haven't set up your CHIP to be able to compile C programs, perform [these instructions](http://wiki.geeky-boy.com/w/index.php?title=CHIP_do_once) up to and including installing gcc.
@@ -108,3 +116,7 @@ I'm not sure why one would want to do this with blink as written, but feel free 
 * 17-Feb-2016
 
     Added binary executable to package.  Updated quickstart to use it.  Made a few more improvements to documentation.  Also changed the 1 second sleep to 1 million microseconds to make it easier to use a faster blink rate.  Also added /tmp/blink.pid file.
+
+* 21-Feb 2016
+
+    Merged in Efreak's ontime/offtime
