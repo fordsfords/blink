@@ -78,9 +78,9 @@ int main ( int argc, char *argv[] )
     int rlen = read(val_fd, readbuf, sizeof(readbuf));  ECHK(rlen > 0);
     close(val_fd);
     if(led) {
-      usleep(ton);
-    } else {
       usleep(toff);
+    } else {
+      usleep(ton);
     }
   } while (readbuf[0] == '1');
 
