@@ -33,21 +33,33 @@
   }  \
 } while (0)
 
- 
-int main()
+
+int main ( int argc, char *argv[] )
 {
   /* Store this process's PID to allow easy killing. */
   FILE *pid_file = fopen("/tmp/blink.pid", "w");  ECHK(pid_file != NULL);
   fprintf(pid_file, "%ld\n", (long)getpid());
   fclose(pid_file);
 
-  /* Enable and configure XIO-P7 as input. */
+  /* initialize */
+  int ton;
+  int toff;
 
+  /* Check for parameters */
+  if(argc > 2) {
+    ton = strtol(argv[1], NULL, 10);
+    toff = strtol(argv[2], NULL, 10);
+  } else {
+    ton = 1000000; /* 1 million microseconds - 1 second of sleep */
+    toff = ton;
+  }
+
+  /* Enable and configure XIO-P7 as input. */
   int exp_fd = open("/sys/class/gpio/export", O_WRONLY);  ECHK(exp_fd != -1);
   /* If port 7 is already exported, the following will fail. That's OK, but warn. */
   int wlen = write(exp_fd, "415", 4);  WCHK(wlen == 4);
   close(exp_fd);
- 
+
   int dir_fd = open("/sys/class/gpio/gpio415/direction", O_RDWR);  ECHK(dir_fd != -1);
   wlen = write(dir_fd, "in", 3);  ECHK(wlen == 3);
   close(dir_fd);
@@ -65,7 +77,11 @@ int main()
     int val_fd = open("/sys/class/gpio/gpio415/value", O_RDWR);  ECHK(val_fd != -1);
     int rlen = read(val_fd, readbuf, sizeof(readbuf));  ECHK(rlen > 0);
     close(val_fd);
-    usleep(1000000);  /* 1 million microseconds - 1 second of sleep */
+    if(led) {
+      usleep(toff);
+    } else {
+      usleep(ton);
+    }
   } while (readbuf[0] == '1');
 
   exp_fd = open("/sys/class/gpio/unexport", O_WRONLY);  ECHK(exp_fd != -1);
@@ -77,3 +93,4 @@ int main()
 
   return 0;
 }  /* main */
+
