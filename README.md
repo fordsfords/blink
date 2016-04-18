@@ -39,7 +39,7 @@ These instructions assume you are in a shell prompt on CHIP.
 
 1. Get the shell script file onto CHIP:
 
-        sudo wget -O/usr/local/bin/blink.sh http://fordsfords.github.io/blink/blink
+        sudo wget -O/usr/local/bin/blink.sh http://fordsfords.github.io/blink/blink.sh
         sudo chmod +x /usr/local/bin/blink.sh
 If you are already running blink and are just refreshing your version, the wget might complain "/usr/local/bin/blink: Text file busy".  If so, you need to kill the currently running blink and try again.  See "killing blink" below.
 
