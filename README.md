@@ -42,7 +42,8 @@ These instructions assume you are in a shell prompt on CHIP.
         sudo wget -O/usr/local/bin/blink.sh http://fordsfords.github.io/blink/blink.sh
         sudo chmod +x /usr/local/bin/blink.sh
         sudo wget -O/etc/systemd/system/blink.service http://fordsfords.github.io/blink/blink.service
-        systemctl enable /etc/systemd/system/blink.service
+        sudo systemctl enable /etc/systemd/system/blink.service
+        sudo service blink start
 
 After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
 
