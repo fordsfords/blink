@@ -50,9 +50,10 @@ After a few seconds watching the blinking LED, briefly press the reset button an
 
 ## Killing Blink
 
-If you are running a recent enough version of blink, it creates the file "/tmp/blink.pid" containing the PID of the blink process.  If this file exists, you can kill blink with:
+Since blink is a serice, you can manually stop it with:
 
-        sudo kill $(cat /tmp/blink.pid)
+        sudo service blink stop
+
 
 ## Random Notes
 
