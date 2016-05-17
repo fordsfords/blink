@@ -23,7 +23,7 @@ at http://geeky-boy.com.  Can't see it?  Keep looking.
 
 The [CHIP](http://getchip.com/) single-board computer runs Linux.  As a result, it should be shut down gracefully, not abruptly by removing power.  But CHIP is often used as an embedded system without any user interface.  In those cases, it can be difficult to know if it has successfully booted, and is difficult to trigger a graceful shutdown.  This program solves both problems.
 
-* When started by root's crontab at boot time, the blinking status LED indicates a successful boot.  Its continuing blinking indicates that CHIP hasn't crashed.
+* When started at boot time, the blinking status LED indicates a successful boot.  Its continuing blinking indicates that CHIP hasn't crashed.
 
 * When the small reset button is pressed BRIEFLY, the blink program will initiate a graceful shutdown.  WARNING: do not press and hold the button.  That will perform a non-graceful power off.  This should only be done if CHIP cannot be shut down gracefully.
 
