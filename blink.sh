@@ -38,7 +38,7 @@ button_not_pressed()
 
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-sleep 10
+echo $$ >/tmp/blink.pid
 
 LED=0
 while button_not_pressed; do :
