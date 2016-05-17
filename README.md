@@ -41,18 +41,10 @@ These instructions assume you are in a shell prompt on CHIP.
 
         sudo wget -O/usr/local/bin/blink.sh http://fordsfords.github.io/blink/blink.sh
         sudo chmod +x /usr/local/bin/blink.sh
-If you are already running blink and are just refreshing your version, the wget might complain "/usr/local/bin/blink: Text file busy".  If so, you need to kill the currently running blink and try again.  See "killing blink" below.
+        sudo wget -O/etc/systemd/system/blink.service http://fordsfords.github.io/blink/blink.service
+        systemctl enable /etc/systemd/system/blink.service
 
-2. Set up root's crontab to automatically start blink at boot time:
-
-        sudo crontab -e
-Add the line "@reboot /usr/local/bin/blink.sh >/tmp/blink.log 2>&1 </dev/null &" near the beginning of the file.  Save and exit.  If you ever want to un-install blink, enter that command again and delete the line.
-
-3. Test the package:
-
-        sudo /usr/local/bin/blink.sh
-
-The program sleeps for 10 seconds before starting to blink the LED.  After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
+After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
 
 
 ## Killing Blink
@@ -71,18 +63,22 @@ If you are running a recent enough version of blink, it creates the file "/tmp/b
 
 ## Release Notes
 
-* 24-Jan-2016
+* 16-May-2016
 
-    Initial pre-release.
+    Got rid of sleep 10.  Added "blink.service" to start as system service instead of cron job.  Also re-added the /tmp/blink.pid file.
 
-* 17-Feb-2016
+* 17-Apr-2016
 
-    Added binary executable to package.  Updated quickstart to use it.  Made a few more improvements to documentation.  Also changed the 1 second sleep to 1 million microseconds to make it easier to use a faster blink rate.  Also added /tmp/blink.pid file.
+    Created shell script which accesses reset button instead of GPIO line.
 
 * 21-Feb 2016
 
     Merged in Efreak's ontime/offtime
 
-* 17-Apr-2016
+* 17-Feb-2016
 
-    Created shell script which accesses reset button instead of GPIO line.
+    Added binary executable to package.  Updated quickstart to use it.  Made a few more improvements to documentation.  Also changed the 1 second sleep to 1 million microseconds to make it easier to use a faster blink rate.  Also added /tmp/blink.pid file.
+
+* 24-Jan-2016
+
+    Initial pre-release.

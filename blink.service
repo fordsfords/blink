@@ -1,0 +1,10 @@
+[Unit]
+Description=start blink after boot
+After=default.target
+
+[Service]
+Type=forked
+ExecStart=/usr/local/bin/blink.sh
+
+[Install]
+WantedBy=default.target
