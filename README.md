@@ -1,5 +1,5 @@
 # blink
-CHIP program to blink status LED and shut down when XIO-P7 is grounded.
+CHIP program to blink status LED and shut down when reset if briefly pressed.
 
 ## License
 
