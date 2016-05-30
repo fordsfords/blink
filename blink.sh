@@ -25,13 +25,14 @@ set_led()
 
 button_not_pressed()
 {
-  BUTTON=`i2cget -f -y 0 0x34 0x4a`
-  if [ "$BUTTON" = "0x00" ]; then :
+  REG34H=`i2cget -f -y 0 0x34 0x4a`  # Read AXP209 register 34H
+  BUTTON=$((REG34H & 0x02))  # mask off the short press bit
+  if [ $BUTTON -eq 0 ]; then :
     return 0  # Button not pressed, return 0 for success.
-  elif [ "$BUTTON" = "0x02" ]; then :
-    return 1  # Button not pressed, return 1 for fail.
+  elif [ $BUTTON -eq 2 ]; then :
+    return 1  # Button is pressed, return 1 for fail.
   else :
-    echo "button_not_pressed: unrecognized i2get output '$BUTTON'" >&2
+    echo "button_not_pressed is confused: REG34H='$REG34H', BUTTON='$BUTTON'" >&2
     exit 1
   fi
 }
