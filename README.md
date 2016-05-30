@@ -65,6 +65,10 @@ Since blink is a serice, you can manually stop it with:
 
 ## Release Notes
 
+* 30-May-2016
+
+    Checked for short button press properly (masking the correct bit).
+
 * 16-May-2016
 
     Got rid of sleep 10.  Added "blink.service" to start as system service instead of cron job.  Also re-added the /tmp/blink.pid file.
