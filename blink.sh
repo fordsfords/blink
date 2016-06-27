@@ -1,4 +1,6 @@
 #!/bin/sh
+# blink.sh -- version 26-Jun-2016
+#
 # Copyright 2016 Steven Ford http://geeky-boy.com and licensed
 # "public domain" style under
 # [CC0](http://creativecommons.org/publicdomain/zero/1.0/): 
@@ -39,13 +41,16 @@ button_not_pressed()
 
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
+# Write PID of running script to /tmp/blink.pid
 echo $$ >/tmp/blink.pid
 
 LED=0
+# Loop until detects short press of reset button
 while button_not_pressed; do :
   sleep 1
   set_led $LED
   LED=`expr 1 - $LED`
 done
 
+# Short press detected, shut down.
 shutdown now
