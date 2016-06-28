@@ -3,7 +3,7 @@ Description=start blink after boot
 After=default.target
 
 [Service]
-Type=forked
+Type=simple
 ExecStart=/usr/local/bin/blink.sh
 
 [Install]

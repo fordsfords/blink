@@ -1,5 +1,5 @@
 #!/bin/sh
-# blink.sh -- version 26-Jun-2016
+# blink.sh -- version 27-Jun-2016
 #
 # Copyright 2016 Steven Ford http://geeky-boy.com and licensed
 # "public domain" style under
