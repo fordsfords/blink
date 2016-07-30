@@ -111,7 +111,7 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 
 ## Random Notes
 
-1. The file /var/tmp/blink.log is created when blink starts running and contains a startup line.  When blink initiates a shutdown, it first adds a line to that file indicating the triggering event.
+1. The file /var/log/blink.log is created when blink starts running and contains a startup line.  When blink initiates a shutdown, it first adds a line to that file indicating the triggering event.
 
 2. There is an older C version of blink which uses a GPIO line instead of the reset button.  Given that the reset button is much better, I don't anticipate the C program will be of interest except perhaps as a simple example of a C program accessing the GPIO lines.
 
@@ -122,9 +122,9 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 ## Release Notes
 
 * 24-Jul-2016
-     Added ability initiate shutdown based on monitoring a GPIO input pin and/or battery charge level.
+    Added ability initiate shutdown based on monitoring a GPIO input pin and/or battery charge level.
     Added ability to blink a GPIO output pin.
-    Changed PID file from /tmp to /var/tmp.  Added log file to /var/tmp.
+    Added log file to /var/log.
 
 * 27-Jun-2016
 
