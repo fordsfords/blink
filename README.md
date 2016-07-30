@@ -23,9 +23,9 @@ at http://geeky-boy.com.  Can't see it?  Keep looking.
 
 The [CHIP](http://getchip.com/) single-board computer runs Linux.  As a result, it should be shut down gracefully, not abruptly by removing power.  But CHIP is often used as an embedded system without any user interface.  In those cases, it can be difficult to know if it has successfully booted, and is difficult to trigger a graceful shutdown.  This program solves both problems.
 
-* When started at boot time, the blinking status LED indicates a successful boot.  Its continuing blinking indicates that CHIP hasn't crashed.
+* At CHIP boot time, blink can indicate successful boot through one or more of two methods: blinking of CHIP's status LED, or blinking of an LED (or other indicator) connected to a GPIO output pin.
 
-* When the small reset button is pressed BRIEFLY, the blink program will initiate a graceful shutdown.  WARNING: do not press and hold the button.  That will perform a non-graceful power off.  This should only be done if CHIP cannot be shut down gracefully.
+* Blink can shut down CHIP gracefully through one or more of three methods: a brief press of CHIP's small reset button (or equivalently, brief grounding of "PWR-ON" pin), grounding of a GPIO input pin, or if CHIP's battery falls below a given percentage of charge.
 
 You can find blink on github.  See:
 
@@ -37,15 +37,28 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
 
 These instructions assume you are in a shell prompt on CHIP.
 
-1. Get the shell script file onto CHIP:
+1. If you have an earlier version of blink running, kill it:
+
+        sudo service blink stop
+
+    If that returns an error, enter:
+
+        sudo kill `cat /tmp/blink.pid`
+
+
+2. Get the shell script file onto CHIP:
 
         sudo wget -O /usr/local/bin/blink.sh http://fordsfords.github.io/blink/blink.sh
         sudo chmod +x /usr/local/bin/blink.sh
         sudo wget -O /etc/systemd/system/blink.service http://fordsfords.github.io/blink/blink.service
+        sudo wget -O /usr/local/etc/blink.cfg http://fordsfords.github.io/blink/blink.cfg
         sudo systemctl enable /etc/systemd/system/blink.service
+
+3. Now test it:
+
         sudo service blink start
 
-After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
+4. After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
 
 
 ## Killing Blink
@@ -55,15 +68,63 @@ Since blink is a service, you can manually stop it with:
         sudo service blink stop
 
 
+## Configuring Blink
+
+Edit the file /usr/local/bin/blink.cfg it should look like this:
+
+        # blink.cfg -- version 24-Jul-2016
+        # Configuration for /usr/local/bin/blink.sh which is normally
+        # installed as a service started at bootup.
+        # See https://github.com/fordsfords/blink/tree/gh-pages
+
+        MON_RESET=1       # Monitor reset button for short press.
+        #MON_GPIO=XIO_P7   # Which GPIO to monitor.
+        #MON_GPIO_VALUE=0  # Indicates which value read from MON_GPIO initiates shutdown.
+        #MON_BATTERY=10    # When battery percentage is below this, shut down.
+
+        BLINK_STATUS=1    # Blink CHIP's status LED.
+        #BLINK_GPIO=XIO_P6 # Blink a GPIO.
+
+The hash sign # represents a comment.  You can uncomment lines (remove the hash) to enable a method, and change the line according to your needs.  Or you can comment lines (add the hash) to disable a method.  Do not add any spaces before or after the equals sign.
+
+For example:
+
+        #MON_RESET=1
+        #MON_GPIO=XIO_P7
+        #MON_GPIO_VALUE=0
+        MON_BATTERY=10
+        #BLINK_STATUS=1
+        #BLINK_GPIO=XIO_P6
+
+This configuration does not blink *any* LEDs, and only monitors the battery.  When the charge percentage drops below 10%, blink initiates a shutdown.
+
+Another example:
+
+        MON_RESET=1
+        MON_GPIO=XIO_P7
+        MON_GPIO_VALUE=0
+        MON_BATTERY=10
+        BLINK_STATUS=1
+        BLINK_GPIO=XIO_P6
+
+This configuration causes blink to turn the status LED on and off, and also XIO-P6 on and off.  It also initiates a shutdown for a short press of reset, or for grounding of XIO-P7, or if the battery drops below 10% charge.
+
 ## Random Notes
 
-1. There is an older C version of blink which uses a GPIO line instead of the reset button.  Given that the reset button is much better, I don't anticipate the C program will be of interest except perhaps as a simple example of a C program accessing the GPIO lines.
+1. The file /var/tmp/blink.log is created when blink starts running and contains a startup line.  When blink initiates a shutdown, it first adds a line to that file indicating the triggering event.
 
-2. As long as the status LED continues to blink, you know that your CHIP is still running.  But if you are running some useful application, the blinking LED does not necessarily give you a good indication of the overall health of your system.  Basically, blink shows that the OS is still running, but your application may have crashed.
+2. There is an older C version of blink which uses a GPIO line instead of the reset button.  Given that the reset button is much better, I don't anticipate the C program will be of interest except perhaps as a simple example of a C program accessing the GPIO lines.
 
-3. There are often ways of automatically monitoring the health of applications.  At a crude level, you can periodically run the "ps" command and at least make sure the process itself is still running.  Even better would be to be able to "poke" the application in some way to produce an expected result (like maybe sending it a signal and writing the application to write a message to a log file).  You could build this capability into blink, and if it detects a failure, change the blink rate of the LED (like to 3 pulses per second).  This still won't tell you *what* is wrong, but at least it narrows things down a bit.
+3. As long as the status LED continues to blink, you know that your CHIP is still running.  But if you are running some useful application, the blinking LED does not necessarily give you a good indication of the overall health of your system.  Basically, blink shows that the OS is still running, but your application may have crashed.
+
+4. There are often ways of automatically monitoring the health of applications.  At a crude level, you can periodically run the "ps" command and at least make sure the process itself is still running.  Even better would be to be able to "poke" the application in some way to produce an expected result (like maybe sending it a signal and writing the application to write a message to a log file).  You could build this capability into blink, and if it detects a failure, change the blink rate of the LED (like to 3 pulses per second).  This still won't tell you *what* is wrong, but at least it narrows things down a bit.
 
 ## Release Notes
+
+* 24-Jul-2016
+     Added ability initiate shutdown based on monitoring a GPIO input pin and/or battery charge level.
+    Added ability to blink a GPIO output pin.
+    Changed PID file from /tmp to /var/tmp.  Added log file to /var/tmp.
 
 * 27-Jun-2016
 
