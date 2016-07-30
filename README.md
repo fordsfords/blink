@@ -41,7 +41,7 @@ These instructions assume you are in a shell prompt on CHIP.
 
         sudo service blink stop
 
-If that returns an error, enter:
+    If that returns an error, enter:
 
         sudo kill `cat /tmp/blink.pid`
 
