@@ -25,7 +25,7 @@ The [CHIP](http://getchip.com/) single-board computer runs Linux.  As a result, 
 
 * At CHIP boot time, blink can indicate successful boot through one or more of two methods: blinking of CHIP's status LED, or blinking of an LED (or other indicator) connected to a GPIO output pin.
 
-* Blink can shut down CHIP gracefully through one or more of three methods: a brief press of CHIP's small reset button (or equivalently, brief grounding of "PWR-ON" pin), grounding of a GPIO input pin, or if CHIP's battery falls below a given percentage of charge.
+* Blink can shut down CHIP gracefully through one or more of three methods: a brief press of CHIP's small reset button (or equivalently, brief grounding of "PWR-ON" pin), grounding of a GPIO input pin, or if CHIP's battery falls below a given percentage of charge.  Note that if CHIP shuts down due to low battery, it will not be possible to boot CHIP successfully without connecting to a power supply.  If you try, blink will immediately detect low battey and will shut down before the system is fully booted.
 
 You can find blink on github.  See:
 
