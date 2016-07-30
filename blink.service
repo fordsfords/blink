@@ -1,3 +1,5 @@
+# blink.service -- version 24-Jul-2016
+# See https://github.com/fordsfords/blink/tree/gh-pages
 [Unit]
 Description=start blink after boot
 After=default.target
