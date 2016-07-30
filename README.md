@@ -85,7 +85,9 @@ Edit the file /usr/local/bin/blink.cfg it should look like this:
         BLINK_STATUS=1    # Blink CHIP's status LED.
         #BLINK_GPIO=XIO_P6 # Blink a GPIO.
 
-The hash sign # represents a comment.  You can uncomment lines (remove the hash) to enable a method, and change the line according to your needs.  Or you can comment lines (add the hash) to disable a method.  For example:
+The hash sign # represents a comment.  You can uncomment lines (remove the hash) to enable a method, and change the line according to your needs.  Or you can comment lines (add the hash) to disable a method.  Do not add any spaces before or after the equals sign.
+
+For example:
 
         #MON_RESET=1
         #MON_GPIO=XIO_P7
@@ -95,6 +97,17 @@ The hash sign # represents a comment.  You can uncomment lines (remove the hash)
         #BLINK_GPIO=XIO_P6
 
 This configuration does not blink *any* LEDs, and only monitors the battery.  When the charge percentage drops below 10%, blink initiates a shutdown.
+
+Another example:
+
+        MON_RESET=1
+        MON_GPIO=XIO_P7
+        MON_GPIO_VALUE=0
+        MON_BATTERY=10
+        BLINK_STATUS=1
+        BLINK_GPIO=XIO_P6
+
+This configuration causes blink to turn the status LED on and off, and also XIO-P6 on and off.  It also initiates a shutdown for a short press of reset, or for grounding of XIO-P7, or if the battery drops below 10% charge.
 
 ## Random Notes
 

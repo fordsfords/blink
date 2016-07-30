@@ -40,11 +40,18 @@ shutdown_check()
   fi
 
   if [ -n "$MON_BATTERY" ]; then :
-    REGB9H=`i2cget -f -y 0 0x34 0xb9`  # Read AXP209 register B9H
-    PERC_CHG=$(($REGB9H))  # convert to decimal
-    if [ $PERC_CHG -lt $MON_BATTERY ]; then :
-      SHUTDOWN_REASON="battery at $PERC_CHG"
-      return 1  # Battery charge below threshold, return 1 for shutdown requested (fail).
+    BAT_IDISCHG_MSB=$(i2cget -y -f 0 0x34 0x7C)
+    BAT_IDISCHG_LSB=$(i2cget -y -f 0 0x34 0x7D)
+    BAT_DISCHG_MA=$(( ( ($BAT_IDISCHG_MSB << 5) | ($BAT_IDISCHG_LSB & 0x1F) ) / 2 ))
+
+    # Only allow battery charge level shutdown if battery is actively running CHIP.
+    if [ $BAT_DISCHG_MA -gt 50 ]; then :
+      REGB9H=`i2cget -f -y 0 0x34 0xb9`  # Read AXP209 register B9H
+      PERC_CHG=$(($REGB9H))  # convert to decimal
+      if [ $PERC_CHG -lt $MON_BATTERY ]; then :
+        SHUTDOWN_REASON="battery at $PERC_CHG"
+        return 1  # Battery charge below threshold, return 1 for shutdown requested (fail).
+      fi
     fi
   fi
 
