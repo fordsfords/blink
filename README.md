@@ -37,16 +37,26 @@ Note: the "gh-pages" branch is considered to be the current stable release.  The
 
 These instructions assume you are in a shell prompt on CHIP.
 
-1. If you have an earlier version of blink running, kill it:
+1. Prerequisites.  If you plan on blinking CHIP's status LED, and/or monitoring the reset button and/or battery, you will need the "i2c-tools" package, installable like this:
+
+        sudo apt-get install i2c-tools
+
+    If you plan to use GPIO inputs and/or outputs, you will need "gpio_sh" package, installable like this:
+
+        sudo wget -O /usr/local/bin/gpio.sh http://fordsfords.github.io/gpio_sh/gpio.sh
+
+    (See https://github.com/fordsfords/gpio_sh/tree/gh-pages for details of "gpio_sh".)
+
+2. If you have an earlier version of blink running, kill it:
 
         sudo service blink stop
 
-    If that returns an error, enter:
+    If that returns a failure, enter:
 
         sudo kill `cat /tmp/blink.pid`
 
 
-2. Get the shell script file onto CHIP:
+3. Get the project files onto CHIP:
 
         sudo wget -O /usr/local/bin/blink.sh http://fordsfords.github.io/blink/blink.sh
         sudo chmod +x /usr/local/bin/blink.sh
@@ -54,11 +64,11 @@ These instructions assume you are in a shell prompt on CHIP.
         sudo wget -O /usr/local/etc/blink.cfg http://fordsfords.github.io/blink/blink.cfg
         sudo systemctl enable /etc/systemd/system/blink.service
 
-3. Now test it:
+4. Now test it:
 
         sudo service blink start
 
-4. After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
+5. After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
 
 
 ## Killing Blink
