@@ -1,4 +1,8 @@
 /* blink.c - CHIP program to blink status light and shut down when XIO-P7 is grounded. */
+
+/* THIS PROGRAM IS NOT THE OFFICIAL BLINK PROGRAM!  It is a very old verison
+ * and is only retained as an example of a C program.  See blink.sh
+ */
 /*
  * This code and its documentation is Copyright 2016 Steven Ford, http://geeky-boy.com
  * and licensed "public domain" style under Creative Commons "CC0": http://creativecommons.org/publicdomain/zero/1.0/
