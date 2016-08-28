@@ -1,5 +1,5 @@
 #!/bin/sh
-# blink.sh -- version 24-Jul-2016
+# blink.sh -- version 28-Aug-2016
 # Normally installed as a service started at bootup.
 # See https://github.com/fordsfords/blink/tree/gh-pages
 #

@@ -131,6 +131,10 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 
 ## Release Notes
 
+* 28-Aug-2016
+    Fixed small bug that caused "chip blink.sh[273]: /usr/local/bin/blink.sh:
+    line 169: [: -eq: unary operator expected".
+
 * 24-Jul-2016
     Added ability initiate shutdown based on monitoring a GPIO input pin and/or battery charge level.
     Added ability to blink a GPIO output pin.
