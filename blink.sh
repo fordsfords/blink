@@ -53,7 +53,7 @@ shutdown_check()
         return 1  # Battery charge below threshold, return 1 for shutdown requested (fail).
       fi
     else :  # Battery not discharging, don't pay attention to charge.
-      PERC_CHG=
+      PERC_CHG=100
     fi
   fi
 
@@ -102,7 +102,7 @@ export BLINK_GPIO=
 export DEBUG=
 
 SHUTDOWN_REASON="unknown"
-PERC_CHG=
+PERC_CHG=100
 
 if [ -f /usr/local/etc/blink.cfg ]; then :
   source /usr/local/etc/blink.cfg
