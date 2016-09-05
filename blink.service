@@ -1,7 +1,7 @@
-# blink.service -- version 28-Aug-2016
+# blink.service -- version 5-Sep-2016
 # See https://github.com/fordsfords/blink/tree/gh-pages
 [Unit]
-Description=start blink after boot
+Description=blink: graceful shutdown service
 After=default.target
 
 [Service]

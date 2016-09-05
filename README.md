@@ -70,6 +70,10 @@ These instructions assume you are in a shell prompt on CHIP.
 
 5. After a few seconds watching the blinking LED, briefly press the reset button and watch CHIP shut down.  Restart CHIP, and when it has completed its reboot, watch the status LED start to blink again.
 
+6. Check logging:
+
+        grep blink /var/log/syslog
+
 
 ## Killing Blink
 
@@ -121,7 +125,7 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 
 ## Random Notes
 
-1. The file /var/log/blink.log is created when blink starts running and contains a startup line.  When blink initiates a shutdown, it first adds a line to that file indicating the triggering event.
+1. Blink logges informational (and maybe error) messages to /var/log/syslog.
 
 2. There is an older C version of blink which uses a GPIO line instead of the reset button.  Given that the reset button is much better, I don't anticipate the C program will be of interest except perhaps as a simple example of a C program accessing the GPIO lines.
 
@@ -131,11 +135,19 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 
 ## Release Notes
 
+* 5-Sep-2016
+
+    Changed logging to go to syslog.  Changed PID file to /run/blink.pid  Some
+    doc improvements.
+
 * 28-Aug-2016
+
     Fixed small bug that caused "chip blink.sh[273]: /usr/local/bin/blink.sh:
-    line 169: [: -eq: unary operator expected".
+
+        line 169: [: -eq: unary operator expected".
 
 * 24-Jul-2016
+
     Added ability initiate shutdown based on monitoring a GPIO input pin and/or battery charge level.
     Added ability to blink a GPIO output pin.
     Added log file to /var/log.
