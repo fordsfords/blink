@@ -1,5 +1,5 @@
 #!/bin/sh
-# blink.sh -- version 28-Aug-2016
+# blink.sh -- version 5-Sep-2016
 # Normally installed as a service started at bootup.
 # See https://github.com/fordsfords/blink/tree/gh-pages
 #
@@ -79,7 +79,7 @@ blink_cleanup()
 blink_stop()
 {
   blink_cleanup
-  echo "blink: stopped" `date` >>/var/log/blink.log
+  echo "blink: stopped"
   exit
 }
 
@@ -91,7 +91,7 @@ touch /var/log/blink.log                              # Make sure it exists.
 tail -500 /var/log/blink.log >/var/log/blink.log.new  # Keep last 500 lines.
 mv /var/log/blink.log.new /var/log/blink.log
 
-echo "blink: starting" `date` >>/var/log/blink.log
+echo "blink: starting"
 
 export MON_RESET=
 export MON_GPIO=
@@ -114,8 +114,8 @@ fi
 if [ -n "$MON_RESET" -o -n "$MON_BATTERY" -o -n "$BLINK_STATUS" ]; then :
   # Need to communicate with AXP209 via I2C commands
   if [ ! -x /usr/sbin/i2cget -o ! -x /usr/sbin/i2cset ]; then :
-    echo "blink: need i2c-tools for MON_RESET, MON_BATTERY, or BLINK_STATUS" >>/var/log/blink.log
-    echo "Use: sudo apt-get install i2c-tools" >>/var/log/blink.log
+    echo "blink: need i2c-tools for MON_RESET, MON_BATTERY, or BLINK_STATUS"
+    echo "Use: sudo apt-get install i2c-tools"
     cat /var/log/blink.log >&2
     exit 1
   fi
@@ -124,8 +124,8 @@ fi
 # If GPIOs are going to be used, set them up.
 if [ -n "$MON_GPIO" -o -n "$BLINK_GPIO" ]; then :
   if [ ! -f /usr/local/bin/gpio.sh ]; then :
-    echo "blink: need /usr/local/bin/gpio.sh for MON_GPIO or BLINK_GPIO" >>/var/log/blink.log
-    echo "See https://github.com/fordsfords/gpio_sh/tree/gh-pages" >>/var/log/blink.log
+    echo "blink: need /usr/local/bin/gpio.sh for MON_GPIO or BLINK_GPIO"
+    echo "See https://github.com/fordsfords/gpio_sh/tree/gh-pages"
     cat /var/log/blink.log >&2
     exit 1
   fi
@@ -135,7 +135,7 @@ if [ -n "$MON_GPIO" -o -n "$BLINK_GPIO" ]; then :
   if [ -n "$MON_GPIO" ]; then :
     gpio_export $MON_GPIO; ST=$?
     if [ $ST -ne 0 ]; then :
-      echo "blink: cannot export $MON_GPIO for monitoring" >>/var/log/blink.log
+      echo "blink: cannot export $MON_GPIO for monitoring"
       cat /var/log/blink.log >&2
       if [ -z "$DEBUG" ]; then exit 1; fi  # if debug, don't exit if export fails.
     fi
@@ -145,7 +145,7 @@ if [ -n "$MON_GPIO" -o -n "$BLINK_GPIO" ]; then :
   if [ -n "$BLINK_GPIO" ]; then :
     gpio_export $BLINK_GPIO; ST=$?
     if [ $ST -ne 0 ]; then :
-      echo "blink: cannot export $BLINK_GPIO for blinking" >>/var/log/blink.log
+      echo "blink: cannot export $BLINK_GPIO for blinking"
       cat /var/log/blink.log >&2
       if [ -z "$DEBUG" ]; then :  # if debug, don't exit if export fails.
         if [ -n "$MON_GPIO" ]; then gpio_unexport $MON_GPIO; fi
@@ -157,11 +157,11 @@ if [ -n "$MON_GPIO" -o -n "$BLINK_GPIO" ]; then :
 fi
 
 # Write PID of running script to /tmp/blink.pid
-echo $$ >/tmp/blink.pid
+echo $$ >/run/blink.pid
 
 # Respond to control-c, kill, and service stop
 trap "blink_stop" 1 2 3 15
-if [ -n "$DEBUG" ]; then echo "blink: DEBUG=$DEBUG" `date` >>/var/log/blink.log; fi
+if [ -n "$DEBUG" ]; then echo "blink: DEBUG=$DEBUG"; fi
 
 LED=0
 # Loop until detects short press of reset button
@@ -175,7 +175,7 @@ while shutdown_check; do :
   LED=`expr 1 - $LED`  # flip LED 1->0, 0->1
 done
 
-echo $SHUTDOWN_REASON `date` >>/var/log/blink.log
+echo $SHUTDOWN_REASON
 
 blink_cleanup
 
