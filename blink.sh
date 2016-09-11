@@ -86,11 +86,6 @@ blink_stop()
 
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-# Keep log file not much more thana 500 lines long (each start/stop cycle adds 2 lines).
-touch /var/log/blink.log                              # Make sure it exists.
-tail -500 /var/log/blink.log >/var/log/blink.log.new  # Keep last 500 lines.
-mv /var/log/blink.log.new /var/log/blink.log
-
 echo "blink: starting"
 
 export MON_RESET=
@@ -116,7 +111,6 @@ if [ -n "$MON_RESET" -o -n "$MON_BATTERY" -o -n "$BLINK_STATUS" ]; then :
   if [ ! -x /usr/sbin/i2cget -o ! -x /usr/sbin/i2cset ]; then :
     echo "blink: need i2c-tools for MON_RESET, MON_BATTERY, or BLINK_STATUS"
     echo "Use: sudo apt-get install i2c-tools"
-    cat /var/log/blink.log >&2
     exit 1
   fi
 fi
@@ -126,7 +120,6 @@ if [ -n "$MON_GPIO" -o -n "$BLINK_GPIO" ]; then :
   if [ ! -f /usr/local/bin/gpio.sh ]; then :
     echo "blink: need /usr/local/bin/gpio.sh for MON_GPIO or BLINK_GPIO"
     echo "See https://github.com/fordsfords/gpio_sh/tree/gh-pages"
-    cat /var/log/blink.log >&2
     exit 1
   fi
 
@@ -136,7 +129,6 @@ if [ -n "$MON_GPIO" -o -n "$BLINK_GPIO" ]; then :
     gpio_export $MON_GPIO; ST=$?
     if [ $ST -ne 0 ]; then :
       echo "blink: cannot export $MON_GPIO for monitoring"
-      cat /var/log/blink.log >&2
       if [ -z "$DEBUG" ]; then exit 1; fi  # if debug, don't exit if export fails.
     fi
     gpio_direction $MON_GPIO in
@@ -146,7 +138,6 @@ if [ -n "$MON_GPIO" -o -n "$BLINK_GPIO" ]; then :
     gpio_export $BLINK_GPIO; ST=$?
     if [ $ST -ne 0 ]; then :
       echo "blink: cannot export $BLINK_GPIO for blinking"
-      cat /var/log/blink.log >&2
       if [ -z "$DEBUG" ]; then :  # if debug, don't exit if export fails.
         if [ -n "$MON_GPIO" ]; then gpio_unexport $MON_GPIO; fi
         exit 1
@@ -166,10 +157,12 @@ if [ -n "$DEBUG" ]; then echo "blink: DEBUG=$DEBUG"; fi
 LED=0
 # Loop until detects short press of reset button
 while shutdown_check; do :
-  if [ $PERC_CHG -eq $MON_BATTERY ]; then :
-    sleep 0.33  # warn that battery is almost at shutdown value
-  else :
-    sleep 1
+  if [ -n "$MON_BATTERY" ]; then :
+    if [ $PERC_CHG -eq $MON_BATTERY ]; then :
+      sleep 0.25  # warn that battery is almost at shutdown value
+    else :
+      sleep 1
+    fi
   fi
   set_led $LED
   LED=`expr 1 - $LED`  # flip LED 1->0, 0->1
