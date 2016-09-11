@@ -135,6 +135,10 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 
 ## Release Notes
 
+* 10-Sep-2016
+
+    Removed writes to blink.log.  Fixed another "unary operator expected" bug.
+
 * 5-Sep-2016
 
     Changed logging to go to syslog.  Changed PID file to /run/blink.pid  Some
