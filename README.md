@@ -135,6 +135,10 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 
 ## Release Notes
 
+* 13-Sep-2016
+
+    Fixed a tight loop when battery not being monitored.
+
 * 10-Sep-2016
 
     Removed writes to blink.log.  Fixed another "unary operator expected" bug.

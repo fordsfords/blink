@@ -1,5 +1,5 @@
 #!/bin/sh
-# blink.sh -- version: "10-Sep-2016"
+# blink.sh -- version: "13-Sep-2016"
 # Normally installed as a service started at bootup.
 # See https://github.com/fordsfords/blink/tree/gh-pages
 #
@@ -163,6 +163,8 @@ while shutdown_check; do :
     else :
       sleep 1
     fi
+  else :
+    sleep 1
   fi
   set_led $LED
   LED=`expr 1 - $LED`  # flip LED 1->0, 0->1

@@ -1,4 +1,4 @@
-# blink.service -- version: "10-Sep-2016"
+# blink.service -- version: "13-Sep-2016"
 # See https://github.com/fordsfords/blink/tree/gh-pages
 [Unit]
 Description=blink: graceful shutdown service
