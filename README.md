@@ -84,7 +84,7 @@ Since blink is a service, you can manually stop it with:
 
 ## Configuring Blink
 
-Edit the file /usr/local/bin/blink.cfg it should look like this:
+Edit the file /usr/local/etc/blink.cfg it should look like this:
 
         # blink.cfg -- version 24-Jul-2016
         # Configuration for /usr/local/bin/blink.sh which is normally
