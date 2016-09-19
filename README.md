@@ -1,5 +1,5 @@
 # blink
-CHIP program to blink status LED and shut down when reset if briefly pressed.
+C.H.I.P. program to blink status LED and shut down when reset if briefly pressed.
 
 ## License
 
@@ -19,19 +19,23 @@ is https://github.com/fordsfords/blink/tree/gh-pages
 To contact me, Steve Ford, project owner, you can find my email address
 at http://geeky-boy.com.  Can't see it?  Keep looking.
 
+
 ## Introduction
 
-The [CHIP](http://getchip.com/) single-board computer runs Linux.  As a result, it should be shut down gracefully, not abruptly by removing power.  But CHIP is often used as an embedded system without any user interface.  In those cases, it can be difficult to know if it has successfully booted, and is difficult to trigger a graceful shutdown.  This program solves both problems.
+The "[C.H.I.P.](http://getchip.com/)" single-board computer runs Linux.  As a result, it should be shut down gracefully, not abruptly (e.g. by removing power).  But CHIP is often used as an embedded system without any user interface.  In those cases, it can be difficult to know if it has successfully booted, and is difficult to trigger a graceful shutdown.  The "blink" program solves both problems.
 
-* At CHIP boot time, blink can indicate successful boot through one or more of two methods: blinking of CHIP's status LED, or blinking of an LED (or other indicator) connected to a GPIO output pin.
+* At CHIP boot time, blink can indicate successful boot by blinking an LED (CHIP's status LED and/or an external GPIO output).
 
-* Blink can shut down CHIP gracefully through one or more of three methods: a brief press of CHIP's small reset button (or equivalently, brief grounding of "PWR-ON" pin), grounding of a GPIO input pin, or if CHIP's battery falls below a given percentage of charge.  As a warning, when the battery charge is equal to the given percentage, the LED will blink faster.  Note that if CHIP shuts down due to low battery, it will not be possible to boot CHIP successfully without connecting to a power supply.  If you try, blink will immediately detect low battey and will shut down before the system is fully booted.
+* Blink can shut down CHIP gracefully through any of several configurable triggers, including button press, battery charge level, and temperature.
+
+* In addition, blink can enter a warning state based on configurable warning thresholds for battery and temperature.  When in warning state, the LED is blinked faster, and each warning can be configured to trigger a GPIO output.
 
 You can find blink on github.  See:
 
 * User documentation (this README): https://github.com/fordsfords/blink/tree/gh-pages
 
 Note: the "gh-pages" branch is considered to be the current stable release.  The "master" branch is the development cutting edge.
+
 
 ## Quick Start
 
@@ -55,14 +59,18 @@ These instructions assume you are in a shell prompt on CHIP.
 
         sudo kill `cat /tmp/blink.pid`
 
-
 3. Get the project files onto CHIP:
 
         sudo wget -O /usr/local/bin/blink.sh http://fordsfords.github.io/blink/blink.sh
         sudo chmod +x /usr/local/bin/blink.sh
         sudo wget -O /etc/systemd/system/blink.service http://fordsfords.github.io/blink/blink.service
-        sudo wget -O /usr/local/etc/blink.cfg http://fordsfords.github.io/blink/blink.cfg
         sudo systemctl enable /etc/systemd/system/blink.service
+
+    If installing blink for the first time, get the configuration file:
+
+        sudo wget -O /usr/local/etc/blink.cfg http://fordsfords.github.io/blink/blink.cfg
+
+    If upgrading blink and have a configuration file, you can skip that step.
 
 4. Now test it:
 
@@ -75,6 +83,25 @@ These instructions assume you are in a shell prompt on CHIP.
         grep blink /var/log/syslog
 
 
+## Details
+
+Blink can monitor up to 4 conditions in any combination:
+* Short press of reset button.
+* A confiured GPIO input reading a configured value (e.g. an external button).
+* The AXP209 temperature exceeding a configured threshold.
+* The battery charge level dropping below a configured threshold (only applies if CHIP is running only on battery; an external power source will suppress battery monitoring).
+
+While blink is running, it can be configured to blink either CHIP's status LED,
+or an external LED connected to a GPIO output (or both).
+
+There are actually two configurable thresholds available for battery and
+temperature, a warning threshold and a shutdown threshold.  There is also a
+configurable GPIO output that can be associated with the battery and/or the
+temperature.  For example, the temperature warning GPIO could turn on a fan,
+and the battery warning GPIO could be used to power down an external device to
+reduce current consumption.
+
+Note that if blink shuts CHIP down due to low battery, it will not be possible to boot CHIP successfully without connecting to a power supply.  If you try, blink will immediately detect low battey and will shut down before the system is fully booted.  Similarly, if blink shuts CHIP down due to high temperature, you must let CHIP cool before you can boot it.
 ## Killing Blink
 
 Since blink is a service, you can manually stop it with:
@@ -91,41 +118,53 @@ Edit the file /usr/local/etc/blink.cfg it should look like this:
         # installed as a service started at bootup.
         # See https://github.com/fordsfords/blink/tree/gh-pages
 
-        MON_RESET=1       # Monitor reset button for short press.
-        #MON_GPIO=XIO_P7   # Which GPIO to monitor.
-        #MON_GPIO_VALUE=0  # Indicates which value read from MON_GPIO initiates shutdown.
-        #MON_BATTERY=10    # When battery percentage is below this, shut down.
+        BLINK_STATUS=1       # Blink CHIP's status LED.
+        #BLINK_GPIO=XIO_P7    # Blink a GPIO.
 
-        BLINK_STATUS=1    # Blink CHIP's status LED.
-        #BLINK_GPIO=XIO_P6 # Blink a GPIO.
+        MON_RESET=1          # Monitor reset button for short press.
+        #MON_GPIO=XIO_P4      # Shutdown when this GPIO is triggered.
+        #MON_GPIO_VALUE=0     # The value read from MON_GPIO that initiates shutdown.
 
-The hash sign # represents a comment.  You can uncomment lines (remove the hash) to enable a method, and change the line according to your needs.  Or you can comment lines (add the hash) to disable a method.  Do not add any spaces before or after the equals sign.
+        #MON_BATTERY=7        # When battery percentage is below this, shut down.
+        #WARN_BATTERY=9       # When battery percentage is below this, assert warning.
+        #WARN_BATTERY_GPIO=XIO_P5  # When battery warning, activate this GPIO.
+        #WARN_BATTERY_GPIO_VALUE=0 # Warning value to write to WARN_BATTERY_GPIO.
 
-For example:
+        #MON_TEMPERATURE=800  # Shutdown temperature in tenths of a degree C. 
+        #WARN_TEMPERATURE=750 # Warning temperature in tenths of a degree C. 
+        #WARN_TEMPERATURE_GPIO=XIO_P6  # When temperature warning, activate this GPIO.
+        #WARN_TEMPERATURE_GPIO_VALUE=0 # Warning value to write to
+        #WARN_TEMPERATURE_GPIO.
 
-        #MON_RESET=1
-        #MON_GPIO=XIO_P7
-        #MON_GPIO_VALUE=0
-        MON_BATTERY=10
-        #BLINK_STATUS=1
-        #BLINK_GPIO=XIO_P6
+The hash sign (#) represents a comment.  Most lines are commented, so their functions do not apply.  I.e. the above (default) configuration only blinks CHIP's status LED and only monitors the reset button for short press.  You can enable a function by uncomment its (remove the hash signs).  Or you can comment lines (add the hash) to disable a method.
 
-This configuration does not blink *any* LEDs, and only monitors the battery.  When the charge percentage drops below 10%, blink initiates a shutdown.
+Do not add any spaces before or after the equals sign.
 
-Another example:
+For example, to skip all blinkign LEDs, and only monitor the battery,
+writing "1" to GPIO CSID0 when the battery drops below 10%, and shutting down
+when the battery drops below 5%:
 
-        MON_RESET=1
-        MON_GPIO=XIO_P7
-        MON_GPIO_VALUE=0
-        MON_BATTERY=10
-        BLINK_STATUS=1
-        BLINK_GPIO=XIO_P6
+        #BLINK_STATUS=1       # Blink CHIP's status LED.
+        #BLINK_GPIO=XIO_P7    # Blink a GPIO.
 
-This configuration causes blink to turn the status LED on and off, and also XIO-P6 on and off.  It also initiates a shutdown for a short press of reset, or for grounding of XIO-P7, or if the battery drops below 10% charge.
+        #MON_RESET=1          # Monitor reset button for short press.
+        #MON_GPIO=XIO_P4      # Shutdown when this GPIO is triggered.
+        #MON_GPIO_VALUE=0     # The value read from MON_GPIO that initiates shutdown.
+
+        MON_BATTERY=5         # When battery percentage is below this, shut down.
+        WARN_BATTERY=10       # When battery percentage is below this, assert warning.
+        WARN_BATTERY_GPIO=CSID0   # When battery warning, activate this GPIO.
+        WARN_BATTERY_GPIO_VALUE=1 # Warning value to write to WARN_BATTERY_GPIO.
+
+        #MON_TEMPERATURE=800  # Shutdown temperature in tenths of a degree C. 
+        #WARN_TEMPERATURE=750 # Warning temperature in tenths of a degree C. 
+        #WARN_TEMPERATURE_GPIO=XIO_P6  # When temperature warning, activate this GPIO.
+        #WARN_TEMPERATURE_GPIO_VALUE=0 # Warning value to write to
+        #WARN_TEMPERATURE_GPIO.
 
 ## Random Notes
 
-1. Blink logges informational (and maybe error) messages to /var/log/syslog.
+1. Blink logges informational (and maybe error) messages to /var/log/daemon.log
 
 2. There is an older C version of blink which uses a GPIO line instead of the reset button.  Given that the reset button is much better, I don't anticipate the C program will be of interest except perhaps as a simple example of a C program accessing the GPIO lines.
 
@@ -133,7 +172,15 @@ This configuration causes blink to turn the status LED on and off, and also XIO-
 
 4. There are often ways of automatically monitoring the health of applications.  At a crude level, you can periodically run the "ps" command and at least make sure the process itself is still running.  Even better would be to be able to "poke" the application in some way to produce an expected result (like maybe sending it a signal and writing the application to write a message to a log file).  You could build this capability into blink, and if it detects a failure, change the blink rate of the LED (like to 3 pulses per second).  This still won't tell you *what* is wrong, but at least it narrows things down a bit.
 
+5. The battery charge level is susceptable to "bit bobble", i.e. it can cycle between two values fairly rapidly.  The CHIP temperature measurement can vary randomly within about a .9 degree range.  To avoid rapid cycling of the warning state, blink adds [hysteresis](https://en.wikipedia.org/wiki/Hysteresis) to the warning thresholds.  For example, if CHIP's temperature exceeds the warning threshold, the temperature warning state is entered.  If the temperature then starts to fall, it must fall to 1.1 degrees lower then the warning threshold to exit the warning state.
+
+
 ## Release Notes
+
+* 17-Sep-2016
+
+    Added temperature monitoring, and also added warning levels.
+    Re-wrote the code pretty much from scratch.
 
 * 13-Sep-2016
 
