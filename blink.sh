@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # blink.sh -- version: "17-Sep-2016"
 # Normally installed as a service started at bootup.
 # See https://github.com/fordsfords/blink/tree/gh-pages
@@ -82,8 +82,10 @@ read_config()
   WARN_BATTERY_GPIO_SET=
   WARN_TEMPERATURE_GPIO_SET=
 
-  if [ -f /usr/local/etc/blink.cfg ]; then :
-    source /usr/local/etc/blink.cfg
+  [ $# -eq 1 ] && CFG=$1 || CFG=/usr/local/etc/blink.cfg
+
+  if [ -f $CFG ]; then :
+    source $CFG
   else :
     MON_RESET=1
     BLINK_STATUS=1
@@ -470,7 +472,7 @@ if [ -f /usr/local/bin/gpio.sh ]; then :
   source /usr/local/bin/gpio.sh
 fi
 
-read_config
+read_config $1
 
 init_externals  # external I/O ports
 
