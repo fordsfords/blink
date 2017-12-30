@@ -82,6 +82,8 @@ read_config()
   WARN_BATTERY_GPIO_SET=
   WARN_TEMPERATURE_GPIO_SET=
 
+  SHUTDOWN_SCRIPT=
+
   [ $# -eq 1 ] && CFG=$1 || CFG=/usr/local/etc/blink.cfg
 
   if [ -f $CFG ]; then :
@@ -434,6 +436,8 @@ check_warn()
 
 shutdown_now()
 {
+
+  [ ! -z "$SHUTDOWN_SCRIPT" ] && [ -x "$SHUTDOWN_SCRIPT" ] && $SHUTDOWN_SCRIPT '$1'
   echo "Shutdown, reason='$1'"
   shutdown -h now
 }
