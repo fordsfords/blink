@@ -439,7 +439,8 @@ shutdown_now()
 
   [ ! -z "$SHUTDOWN_SCRIPT" ] && [ -x "$SHUTDOWN_SCRIPT" ] && $SHUTDOWN_SCRIPT '$1'
   echo "Shutdown, reason='$1'"
-  shutdown -h now
+  which shutdown && shutdown -h now
+  which poweroff && poweroff
 }
 
 
