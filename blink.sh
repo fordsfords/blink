@@ -69,6 +69,7 @@ read_config()
   WARN_BATTERY_GPIO=
   WARN_BATTERY_GPIO_VALUE=0
 
+  HAVE_TEMP_SENSOR=
   MON_TEMPERATURE=
   WARN_TEMPERATURE=
   WARN_TEMPERATURE_GPIO=
@@ -211,8 +212,9 @@ init_mon_battery()
       gpio_output $WARN_BATTERY_GPIO $WARN_BATTERY_GPIO_LEVEL
     fi
 
+    TS=$(expr 2 + $HAVE_TEMP_SENSOR)
     # force ADC enable for battery voltage and current
-    i2cset -y -f 0 0x34 0x82 0xC3
+    i2cset -y -f 0 0x34 0x82 0xC$TS
 
     MON_BATTERY_SAMPLE_PWR=
     MON_BATTERY_SAMPLE_PERC=
