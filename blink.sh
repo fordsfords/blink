@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # blink.sh -- version: "17-Sep-2016"
 # Normally installed as a service started at bootup.
 # See https://github.com/fordsfords/blink/tree/gh-pages
@@ -69,6 +69,7 @@ read_config()
   WARN_BATTERY_GPIO=
   WARN_BATTERY_GPIO_VALUE=0
 
+  HAVE_TEMP_SENSOR=
   MON_TEMPERATURE=
   WARN_TEMPERATURE=
   WARN_TEMPERATURE_GPIO=
@@ -82,8 +83,12 @@ read_config()
   WARN_BATTERY_GPIO_SET=
   WARN_TEMPERATURE_GPIO_SET=
 
-  if [ -f /usr/local/etc/blink.cfg ]; then :
-    source /usr/local/etc/blink.cfg
+  SHUTDOWN_SCRIPT=
+
+  [ $# -eq 1 ] && CFG=$1 || CFG=/usr/local/etc/blink.cfg
+
+  if [ -f $CFG ]; then :
+    source $CFG
   else :
     MON_RESET=1
     BLINK_STATUS=1
@@ -207,8 +212,9 @@ init_mon_battery()
       gpio_output $WARN_BATTERY_GPIO $WARN_BATTERY_GPIO_LEVEL
     fi
 
+    TS=$(expr 2 + $HAVE_TEMP_SENSOR)
     # force ADC enable for battery voltage and current
-    i2cset -y -f 0 0x34 0x82 0xC3
+    i2cset -y -f 0 0x34 0x82 0xC$TS
 
     MON_BATTERY_SAMPLE_PWR=
     MON_BATTERY_SAMPLE_PERC=
@@ -432,8 +438,11 @@ check_warn()
 
 shutdown_now()
 {
+
+  [ ! -z "$SHUTDOWN_SCRIPT" ] && [ -x "$SHUTDOWN_SCRIPT" ] && $SHUTDOWN_SCRIPT '$1'
   echo "Shutdown, reason='$1'"
-  shutdown -h now
+  which shutdown && shutdown -h now
+  which poweroff && poweroff
 }
 
 
@@ -470,7 +479,7 @@ if [ -f /usr/local/bin/gpio.sh ]; then :
   source /usr/local/bin/gpio.sh
 fi
 
-read_config
+read_config $1
 
 init_externals  # external I/O ports
 
